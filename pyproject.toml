@@ -3,12 +3,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "OSlg"
+name = "oslg"
 version = "0.0.1"
 authors = [
   { name="Denis Bourgeois", email="denis@rd2.ca" },
 ]
-description = "OpenStudio SDK logger"
+description = "OpenStudio SDK logger for Python"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
