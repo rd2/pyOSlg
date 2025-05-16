@@ -28,13 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-sys.path.append("./oslg")
+sys.path.append("./src/oslg")
 
 import unittest
 import oslg
 
 class TestOSlgModuleMethods(unittest.TestCase):
-    def test_OSlg_access(self):
+    def test_pyOSlg_access(self):
         self.assertEqual(oslg.CN.DEBUG, 1)
 
     def test_upper(self):
