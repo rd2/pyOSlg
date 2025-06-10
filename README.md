@@ -1,2 +1,5 @@
-# pyOSlg
-Python implementation of OSlg
+# oslg
+
+Python implementation of the OSlg logger for the OpenStudio SDK.
+
+(original Ruby implementation/documentation : https://github.com/rd2/oslg)
