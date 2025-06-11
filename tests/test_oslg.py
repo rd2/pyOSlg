@@ -33,9 +33,15 @@ sys.path.append("./src/oslg")
 import unittest
 import oslg
 
+DBG = oslg.CN.DEBUG
+INF = oslg.CN.INFO
+WRN = oslg.CN.WARN
+ERR = oslg.CN.ERROR
+FTL = oslg.CN.FATAL
+
 class TestOSlgModuleMethods(unittest.TestCase):
     def test_pyOSlg_access(self):
-        self.assertEqual(oslg.CN.DEBUG, 1)
+        self.assertEqual(DBG, 1)
 
     def test_upper(self):
         self.assertEqual("foo".upper(), "FOO")
@@ -54,43 +60,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-# PACKAGE_PARENT = pathlib.Path(__file__).parent
-# sys.path.append(str(PACKAGE_PARENT))
-
-## Standalone boilerplate before relative imports
-# if __package__ is None:
-#     DIR = pathlib.Path(__file__).resolve().parent
-#     sys.path.insert(0, str(DIR.parent))
-#     __package__ = DIR.name
-#
-# from .. import oslg
-
-# DBG = oslg.CONSTANTS.DEBUG
-# INF = oslg.CONSTANTS.INFO
-# WRN = oslg.CONSTANTS.WARN
-# ERR = oslg.CONSTANTS.ERROR
-# FTL = oslg.CONSTANTS.FATAL
-
-# DBG = oslg.DEBUG
-# INF = oslg.INFO
-# WRN = oslg.WARN
-# ERR = oslg.ERROR
-# FTL = oslg.FATAL
-#
-#
-# print(DBG)  # OK!
-# DBG = 6  # NOPE
-# print(DBG)  # OK!
-#
-# print(oslg.DEBUG)  # OK!
-# oslg.DEBUG = 6  # NOPE
-# print(oslg.DEBUG)  # OK!
-#
-# print(f"{oslg.DEBUG == 1}") # False
-# print(f"{DBG == 1}")        # False
-#
-# print(oslg.__name__)
-# print(oslg.ERROR)
-# print(oslg.logs)
-# # oslg.CONSTANTS.ERROR = 555
-# print(oslg.ERROR)
+print(len(oslg.logs()))
+print(len(oslg.tag))
+print(len(oslg.msg))
+print(oslg.is_debug())

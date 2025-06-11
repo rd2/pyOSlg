@@ -36,28 +36,37 @@ class _CN:
     WARN  = 3
     ERROR = 4
     FATAL = 5
-CN = _CN()
+CN     = _CN()
 
-print("... Importing oslg")
+tag = ("",
+       "DEBUG",
+       "INFO",
+       "WARNING",
+       "ERROR",
+       "FATAL")
 
-logs = []
-    # @@level      = INFO
-    # @@status     = 0
-    #
-    # @@tag        = []
-    # @@tag[0    ] = ""
-    # @@tag[DEBUG] = "DEBUG"
-    # @@tag[INFO ] = "INFO"
-    # @@tag[WARN ] = "WARNING"
-    # @@tag[ERROR] = "ERROR"
-    # @@tag[FATAL] = "FATAL"
-    #
-    # @@msg        = []
-    # @@msg[0    ] = ""
-    # @@msg[DEBUG] = "Debugging ..."
-    # @@msg[INFO ] = "Success! No errors, no warnings"
-    # @@msg[WARN ] = "Partial success, raised non-fatal warnings"
-    # @@msg[ERROR] = "Partial success, encountered non-fatal errors"
-    # @@msg[FATAL] = "Failure, triggered fatal errors"
+msg = ("",
+       "Debugging ...",
+       "Success! No errors, no warnings",
+       "Partial success, raised non-fatal warnings",
+       "Partial success, encountered non-fatal errors",
+       "Failure, triggered fatal errors")
 
-# https://stackoverflow.com/questions/2682745/how-do-i-create-a-constant-in-python
+__logs   = []
+__level  = CN.INFO
+__status = 0
+
+def logs():
+    """Returns the logs list."""
+    return __logs
+
+def level():
+    """Returns current log level."""
+    return __level
+
+def status():
+    """Returns current log status."""
+    return __status
+
+def is_debug():
+    return bool(__status == CN.DEBUG)
