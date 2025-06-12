@@ -36,21 +36,21 @@ class _CN:
     WARN  = 3
     ERROR = 4
     FATAL = 5
-CN     = _CN()
+CN = _CN()
 
-tag = ("",
-       "DEBUG",
-       "INFO",
-       "WARNING",
-       "ERROR",
-       "FATAL")
+__tag = ("",
+         "DEBUG",
+         "INFO",
+         "WARNING",
+         "ERROR",
+         "FATAL")
 
-msg = ("",
-       "Debugging ...",
-       "Success! No errors, no warnings",
-       "Partial success, raised non-fatal warnings",
-       "Partial success, encountered non-fatal errors",
-       "Failure, triggered fatal errors")
+__msg = ("",
+         "Debugging ...",
+         "Success! No errors, no warnings",
+         "Partial success, raised non-fatal warnings",
+         "Partial success, encountered non-fatal errors",
+         "Failure, triggered fatal errors")
 
 __logs   = []
 __level  = CN.INFO
@@ -69,4 +69,54 @@ def status():
     return __status
 
 def is_debug():
+    """Returns whether current status is DEBUG."""
     return bool(__status == CN.DEBUG)
+
+def is_info():
+    """Returns whether current status is INFO."""
+    return bool(__status == CN.INFO)
+
+def is_warn():
+    """Returns whether current status is WARNING."""
+    return bool(__status == CN.WARNING)
+
+def is_error():
+    """Returns whether current status is ERROR."""
+    return bool(__status == CN.ERROR)
+
+def is_fatal():
+    """Returns whether current status is FATAL."""
+    return bool(__status == CN.FATAL)
+
+def tag(lvl=__level):
+    """Returns preset OSlg string that matches log level."""
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return __tag[0]
+
+    if not 0 <= lvl < len(__tag):
+        return __tag[0]
+
+    return __tag[lvl]
+
+def msg(stat=__status):
+    """Returns preset OSlg message that matches log status."""
+    try:
+        stat = int(stat)
+    except ValueError as e:
+        return __msg[0]
+
+    if not 0 <= stat < len(__msg):
+        return __msg[0]
+
+    return __msg[stat]
+
+def trim(txt="", length=60):
+    """Converts object to String and trims if necessary."""
+    try:
+        length = int(length)
+    except ValueError as e:
+        length = 60
+
+    return str(txt.strip()[:length])

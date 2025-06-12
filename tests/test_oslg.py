@@ -40,27 +40,24 @@ ERR = oslg.CN.ERROR
 FTL = oslg.CN.FATAL
 
 class TestOSlgModuleMethods(unittest.TestCase):
-    def test_pyOSlg_access(self):
+    def test_oslg_constants(self):
         self.assertEqual(DBG, 1)
 
-    def test_upper(self):
-        self.assertEqual("foo".upper(), "FOO")
+    def test_oslg_initialized(self):
+        self.assertEqual(len(oslg.logs()), 0)
+        self.assertEqual(oslg.level(), INF)
+        self.assertEqual(oslg.status(), 0)
+        self.assertNotEqual(oslg.level(), DBG)
+        self.assertNotEqual(oslg.status(), ERR)
+        self.assertEqual(oslg.tag(), "INFO")
+        self.assertEqual(oslg.msg(), "")
 
-    def test_isupper(self):
-        self.assertTrue("FOO".isupper())
-        self.assertFalse("Foo".isupper())
-
-    def test_split(self):
-        s = "hello world"
-        self.assertEqual(s.split(), ["hello", "world"])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
+    def test_oslg_basic_calls(self):
+        self.assertEqual(oslg.tag(WRN), "WARNING")
+        self.assertEqual(oslg.msg(FTL), "Failure, triggered fatal errors")
+        self.assertNotEqual(oslg.msg(FTL), "Debugging ...")
+        self.assertEqual(oslg.trim("   oslg  "), "oslg")
+        self.assertEqual(oslg.trim("   oslg  ", 3), "osl")
 
 if __name__ == "__main__":
     unittest.main()
-
-print(len(oslg.logs()))
-print(len(oslg.tag))
-print(len(oslg.msg))
-print(oslg.is_debug())
