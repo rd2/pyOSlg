@@ -124,13 +124,20 @@ def msg(stat=_status):
 
 
 def trim(txt="", length=60):
-    """Converts object to String and trims if necessary."""
+    """Converts object to String - trims if necessary."""
     try:
         length = int(length)
     except ValueError as e:
         length = 60
 
-    return str(txt.strip()[:length])
+    try:
+        txt = str(txt).strip()[:length]
+    except UnicodeEncodeError:
+        txt = ""
+    except Exception as e:
+        txt = ""
+
+    return txt
 
 
 def reset(lvl=CN.DEBUG):
@@ -158,17 +165,44 @@ def log(lvl=CN.DEBUG, message=""):
     except ValueError as e:
         return _status
 
-    try:
-        message = str(message)
-    except ValueError as e:
-        return _status
+    message = trim(message)
 
-    if lvl < CN.DEBUG or lvl > CN.FATAL or lvl < _level:
+    if not message or lvl < CN.DEBUG or lvl > CN.FATAL or lvl < _level:
         return _status
-
-    _logs.append(dict(level=lvl, message=message))
 
     if lvl > _status:
         _status = lvl
 
+    _logs.append(dict(level=lvl, message=message))
+
     return _status
+
+
+def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
+    """Logs template 'invalid object' message (~60chars), if valid arguments."""
+    id  = trim(id)
+    mth = trim(mth)
+
+    try:
+        ord = int(ord)
+    except ValueError as e:
+        return res
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return res
+
+    if not id or not mth or lvl < DEBUG or lvl > FATAL:
+        return res
+
+    msg = "Invalid '%s' " % (id)
+
+    if ord > 0:
+        msg += "arg ##%d "  % (ord)
+
+    msg += "(%s)" % (mth)
+    
+    log(lvl, msg)
+
+    return res

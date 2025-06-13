@@ -56,6 +56,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertNotEqual(oslg.msg(FTL), "Debugging ...")
         self.assertEqual(oslg.trim("   oslg  "), "oslg")
         self.assertEqual(oslg.trim("   oslg  ", 3), "osl")
+        self.assertEqual(oslg.trim("   oslg  ", 64), "oslg")
 
     def test02_oslg_resets(self):
         self.assertEqual(oslg.level(), INF)
