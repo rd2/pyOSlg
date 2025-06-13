@@ -43,7 +43,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
     def test_oslg_constants(self):
         self.assertEqual(DBG, 1)
 
-    def test_oslg_initialized(self):
+    def test01_oslg_initialized(self):
         self.assertEqual(len(oslg.logs()), 0)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(oslg.status(), 0)
@@ -51,13 +51,23 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertNotEqual(oslg.status(), ERR)
         self.assertEqual(oslg.tag(), "INFO")
         self.assertEqual(oslg.msg(), "")
-
-    def test_oslg_basic_calls(self):
         self.assertEqual(oslg.tag(WRN), "WARNING")
         self.assertEqual(oslg.msg(FTL), "Failure, triggered fatal errors")
         self.assertNotEqual(oslg.msg(FTL), "Debugging ...")
         self.assertEqual(oslg.trim("   oslg  "), "oslg")
         self.assertEqual(oslg.trim("   oslg  ", 3), "osl")
+
+    def test02_oslg_resets(self):
+        self.assertEqual(oslg.level(), INF)
+        self.assertEqual(oslg.reset(10), INF)
+        self.assertEqual(oslg.reset(FTL), FTL)
+        self.assertEqual(oslg.reset(), DBG)
+        self.assertEqual(oslg.reset(INF), INF)
+        self.assertEqual(oslg.level(), INF)
+
+    def test03_oslg_logging(self):
+        self.assertEqual(oslg.log(FTL, oslg.msg(FTL)), FTL)
+        self.assertEqual(len(oslg.logs()), 1)
 
 if __name__ == "__main__":
     unittest.main()

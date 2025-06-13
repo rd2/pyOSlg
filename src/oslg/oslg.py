@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from dataclasses import dataclass
-@dataclass(frozen=True)
 
+@dataclass(frozen=True)
 class _CN:
     DEBUG = 1
     INFO  = 2
@@ -38,79 +38,90 @@ class _CN:
     FATAL = 5
 CN = _CN()
 
-__tag = ("",
-         "DEBUG",
-         "INFO",
-         "WARNING",
-         "ERROR",
-         "FATAL")
+_tag = ("",
+        "DEBUG",
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "FATAL")
 
-__msg = ("",
-         "Debugging ...",
-         "Success! No errors, no warnings",
-         "Partial success, raised non-fatal warnings",
-         "Partial success, encountered non-fatal errors",
-         "Failure, triggered fatal errors")
+_msg = ("",
+        "Debugging ...",
+        "Success! No errors, no warnings",
+        "Partial success, raised non-fatal warnings",
+        "Partial success, encountered non-fatal errors",
+        "Failure, triggered fatal errors")
 
-__logs   = []
-__level  = CN.INFO
-__status = 0
+_logs   = []
+_level  = CN.INFO
+_status = 0
+
 
 def logs():
     """Returns the logs list."""
-    return __logs
+    return _logs
+
 
 def level():
     """Returns current log level."""
-    return __level
+    return _level
+
 
 def status():
     """Returns current log status."""
-    return __status
+    return _status
+
 
 def is_debug():
     """Returns whether current status is DEBUG."""
-    return bool(__status == CN.DEBUG)
+    return bool(_status == CN.DEBUG)
+
 
 def is_info():
     """Returns whether current status is INFO."""
-    return bool(__status == CN.INFO)
+    return bool(_status == CN.INFO)
+
 
 def is_warn():
     """Returns whether current status is WARNING."""
-    return bool(__status == CN.WARNING)
+    return bool(_status == CN.WARNING)
+
 
 def is_error():
     """Returns whether current status is ERROR."""
-    return bool(__status == CN.ERROR)
+    return bool(_status == CN.ERROR)
+
 
 def is_fatal():
     """Returns whether current status is FATAL."""
-    return bool(__status == CN.FATAL)
+    return bool(_status == CN.FATAL)
 
-def tag(lvl=__level):
+
+def tag(lvl=_level):
     """Returns preset OSlg string that matches log level."""
     try:
         lvl = int(lvl)
     except ValueError as e:
-        return __tag[0]
+        return _tag[0]
 
-    if not 0 <= lvl < len(__tag):
-        return __tag[0]
+    if not 0 <= lvl < len(_tag):
+        return _tag[0]
 
-    return __tag[lvl]
+    return _tag[lvl]
 
-def msg(stat=__status):
+
+def msg(stat=_status):
     """Returns preset OSlg message that matches log status."""
     try:
         stat = int(stat)
     except ValueError as e:
-        return __msg[0]
+        return _msg[0]
 
-    if not 0 <= stat < len(__msg):
-        return __msg[0]
+    if not 0 <= stat < len(_msg):
+        return _msg[0]
 
-    return __msg[stat]
+    return _msg[stat]
+
 
 def trim(txt="", length=60):
     """Converts object to String and trims if necessary."""
@@ -120,3 +131,44 @@ def trim(txt="", length=60):
         length = 60
 
     return str(txt.strip()[:length])
+
+
+def reset(lvl=CN.DEBUG):
+    """Resets level, if lvl (input) is within accepted range."""
+    global _level
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return _level
+
+    if CN.DEBUG <= lvl <= CN.FATAL:
+        _level = lvl
+
+    return _level
+
+
+def log(lvl=CN.DEBUG, message=""):
+    """Logs a new entry, if provided arguments are valid."""
+    global _status
+    global _logs
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return _status
+
+    try:
+        message = str(message)
+    except ValueError as e:
+        return _status
+
+    if lvl < CN.DEBUG or lvl > CN.FATAL or lvl < _level:
+        return _status
+
+    _logs.append(dict(level=lvl, message=message))
+
+    if lvl > _status:
+        _status = lvl
+
+    return _status
