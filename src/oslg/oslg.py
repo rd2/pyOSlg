@@ -201,7 +201,7 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
     msg = "Invalid '%s' " % (id)
 
     if ord > 0:
-        msg += "arg ##%d "  % (ord)
+        msg += "arg #%d "  % (ord)
 
     msg += "(%s)" % (mth)
     log(lvl, msg)
@@ -232,7 +232,7 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
     return res
 
 
-def key(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
+def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
     """Logs template 'missing hash key' message, if valid arguments."""
 
     id  = trim(id)
