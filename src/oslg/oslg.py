@@ -27,6 +27,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import inspect
+
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -193,7 +195,7 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < DEBUG or lvl > FATAL:
+    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
         return res
 
     msg = "Invalid '%s' " % (id)
@@ -202,7 +204,119 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
         msg += "arg ##%d "  % (ord)
 
     msg += "(%s)" % (mth)
-    
     log(lvl, msg)
 
     return res
+
+
+def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
+    """Logs template 'instance/class mismatch' message, if valid arguments."""
+
+    id  = trim(id)
+    mth = trim(mth)
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return res
+
+    if not inspect.isclass(cl) or isinstance(obj, cl):
+        return res
+    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
+        return res
+
+    msg  = "'%s' %s? " % (id, type(obj).__name__)
+    msg += "expecting %s (%s)" % (cl.__name__, mth)
+    log(lvl, msg)
+
+    return res
+
+
+def key(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
+    """Logs template 'missing hash key' message, if valid arguments."""
+
+    id  = trim(id)
+    mth = trim(mth)
+    ky  = trim(key)
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return res
+
+    if not isinstance(dct, dict) or key in dct:
+        return res
+    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
+        return res
+
+    log(lvl, "Missing '%s' key in %s (%s)" % (ky, id, mth))
+
+    return res
+
+
+def empty(id="", mth="", lvl=CN.DEBUG, res=None):
+    """Logs template 'empty' message, if provided arguments are valid."""
+
+    id  = trim(id)
+    mth = trim(mth)
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return res
+
+    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
+        return res
+
+    log(lvl, "Empty '%s' (%s)" % (id, mth))
+
+    res
+
+
+def zero(id="", mth="", lvl=CN.DEBUG, res=None):
+    """Logs template 'zero' value message, if provided arguments are valid."""
+
+    id  = trim(id)
+    mth = trim(mth)
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return res
+
+    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
+        return res
+
+    log(lvl, "Zero '%s' (%s)" % (id, mth))
+
+    return res
+
+
+def negative(id="", mth="", lvl=CN.DEBUG, res=None):
+    """Logs template 'negative' message, if provided arguments are valid."""
+
+    id  = trim(id)
+    mth = trim(mth)
+
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return res
+
+    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
+        return res
+
+    log(lvl, "Negative '%s' (%s)" % (id, mth))
+
+    return res
+
+
+def clean():
+    """Resets log status and entries."""
+    global _status
+    global _logs
+
+    _status = 0
+    _logs   = []
+
+    return _level
