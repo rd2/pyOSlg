@@ -1,8 +1,8 @@
 name: Pull Request CI
 on:
   pull_request:
-    branches:
-      - develop
+    branches: develop
+
 jobs:
   test_oslg:
     runs-on: ubuntu-22.04
