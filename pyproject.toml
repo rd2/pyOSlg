@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "oslg"
 version = "0.3.0"
-requires-python = ">=3.10"
+requires-python = ">=3.5"
 authors = [
   {name = "Denis Bourgeois", email = "denis@rd2.ca"}
 ]
