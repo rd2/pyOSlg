@@ -1,16 +1,13 @@
 name: Pull Request CI
-
 on:
   pull_request:
     branches:
       - develop
-
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        os: [ubuntu-22.04]
         python-version: [3.2, 3.5, 3.10]
     steps:
         uses: actions/checkout@v4
