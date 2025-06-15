@@ -4,7 +4,7 @@ on:
     branches:
       - develop
 jobs:
-  build:
+  test_oslg:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
