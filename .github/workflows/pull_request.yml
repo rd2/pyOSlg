@@ -6,35 +6,20 @@ on:
       - develop
 
 jobs:
-  test_361x:
+  build:
     runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        python-version: [3.2, 3.5, 3.10]
+
     steps:
-      - name: Check out repository
         uses: actions/checkout@v2
-      - name: Run Tests
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }
+
+      - name: Run unit tests
         run: |
-          echo $(pwd)
-          echo $(ls)
-          docker pull nrel/openstudio:3.6.1
-          docker run --name test --rm -d -t -v $(pwd):/work -w /work nrel/openstudio:3.6.1
-          docker exec -t test pwd
-          docker exec -t test ls
-          docker exec -t test bundle update
-          docker exec -t test bundle exec rake
-          docker kill test
-  test_390x:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Run Tests
-        run: |
-          echo $(pwd)
-          echo $(ls)
-          docker pull nrel/openstudio:3.9.0
-          docker run --name test --rm -d -t -v $(pwd):/work -w /work nrel/openstudio:3.9.0
-          docker exec -t test pwd
-          docker exec -t test ls
-          docker exec -t test bundle update
-          docker exec -t test bundle exec rake
-          docker kill test
+        python -m unittest discover -s . -p 'test_*.py'
