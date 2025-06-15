@@ -22,8 +22,6 @@ jobs:
           docker exec -t test bundle update
           docker exec -t test bundle exec rake
           docker kill test
-
-jobs:
   test_390x:
     runs-on: ubuntu-22.04
     steps:
