@@ -31,7 +31,7 @@ import sys
 sys.path.append("./src/oslg")
 
 import unittest
-import oslg
+from oslg import oslg
 
 DBG = oslg.CN.DEBUG
 INF = oslg.CN.INFO
