@@ -1,19 +1,10 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "oslg"
 version = "0.3.0a1"
-requires-python = ">=3.2"
-authors = [
-  {name = "Denis Bourgeois", email = "denis@rd2.ca"}
-]
-maintainers = [
-  {name = "Denis Bourgeois", email = "denis@rd2.ca"}
-]
 description = "OpenStudio SDK logger for Python"
 readme = "README.md"
+requires-python = ">=3.2"
+dependencies = []
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 classifiers = [
@@ -27,6 +18,3 @@ keywords = ["openstudio", "logger"]
 [project.urls]
 "Homepage" = "https://github.com/rd2/pyOSlg"
 "Bug Tracker" = "https://github.com/rd2/pyOSlg/issues"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/oslg"]
