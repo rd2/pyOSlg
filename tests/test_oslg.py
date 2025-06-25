@@ -27,11 +27,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# import sys
-# sys.path.append("./src/oslg")
-
-# print(sys.path)
-
 import unittest
 from src.oslg import oslg
 
@@ -73,6 +68,8 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.level(), INF)
 
     def test03_oslg_invalid_argument_log(self):
+        m1 = "Invalid 'radius' arg #2 (area)"
+        m2 = "Invalid 'radius' (area)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
         self.assertEqual(oslg.invalid("radius", "area", 2, FTL), None)
@@ -81,7 +78,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), FTL)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"], "Invalid 'radius' arg #2 (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m1)
         self.assertEqual(oslg.logs()[0]["level"], FTL)
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
@@ -92,13 +89,15 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), FTL)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"], "Invalid 'radius' (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m2)
         self.assertEqual(oslg.logs()[0]["level"], FTL)
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
 
     def test04_oslg_mismatched_argument_log(self):
+        m1 = "'radius' str? expecting float (area)"
+        m2 = "'roster' list? expecting dict (index)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
         self.assertEqual(oslg.mismatch("radius", "5", float, "area", ERR), None)
@@ -107,13 +106,25 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), ERR)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"], "'radius' str? expecting float (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m1)
+        self.assertEqual(oslg.logs()[0]["level"], oslg.status())
+        self.assertEqual(oslg.reset(INF), INF)
+        self.assertEqual(oslg.clean(), INF)
+        self.assertEqual(oslg.level(), INF)
+        self.assertEqual(oslg.mismatch("roster", [], dict, "index", ERR), None)
+        self.assertFalse(oslg.is_info())
+        self.assertTrue(oslg.is_error())
+        self.assertEqual(oslg.status(), ERR)
+        self.assertEqual(oslg.level(), INF)
+        self.assertEqual(len(oslg.logs()), 1)
+        self.assertEqual(oslg.logs()[0]["message"], m2)
         self.assertEqual(oslg.logs()[0]["level"], oslg.status())
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
 
     def test05_oslg_missing_key_argument_log(self):
+        m1 = "Missing 'r' key in argh (area)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
         self.assertEqual(oslg.hashkey("argh", {"a":3}, "r", "area", ERR), None)
@@ -122,13 +133,14 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), ERR)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"], "Missing 'r' key in argh (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m1)
         self.assertEqual(oslg.logs()[0]["level"], oslg.status())
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
 
     def test06_oslg_empty_argument_log(self):
+        m1 = "Empty 'hash' (area)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
         self.assertEqual(oslg.empty("hash", "area", ERR), None)
@@ -137,13 +149,14 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), ERR)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"],"Empty 'hash' (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m1)
         self.assertEqual(oslg.logs()[0]["level"], oslg.status())
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
 
     def test07_oslg_zero_argument_log(self):
+        m1 = "Zero 'radius' (area)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
         self.assertEqual(oslg.zero("radius", "area", ERR), None)
@@ -152,13 +165,14 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), ERR)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"],"Zero 'radius' (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m1)
         self.assertEqual(oslg.logs()[0]["level"], oslg.status())
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
 
     def test07_oslg_zero_argument_log(self):
+        m1 = "Negative 'radius' (area)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
         self.assertEqual(oslg.negative("radius", "area", ERR), None)
@@ -167,7 +181,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.status(), ERR)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
-        self.assertEqual(oslg.logs()[0]["message"],"Negative 'radius' (area)")
+        self.assertEqual(oslg.logs()[0]["message"], m1)
         self.assertEqual(oslg.logs()[0]["level"], oslg.status())
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
