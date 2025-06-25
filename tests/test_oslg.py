@@ -27,11 +27,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-sys.path.append("./src/oslg")
+# import sys
+# sys.path.append("./src/oslg")
+
+# print(sys.path)
 
 import unittest
-import oslg
+from src.oslg import oslg
 
 DBG = oslg.CN.DEBUG
 INF = oslg.CN.INFO
