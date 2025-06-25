@@ -223,18 +223,17 @@ def reset(lvl=CN.DEBUG) -> int:
 
 def log(lvl=CN.DEBUG, message="") -> int:
     """
-    Logs a new entry. Overall log status is raised to the new log level, if
-    the latter is greater than the former (e.g. FATAL > ERROR). Candidate log
-    entry is ignored and status remains unchanged if the new level cannot be
-    converted to an integer, or if not an OSlg constant (once converted).
-    Relies on module method trim(): candidate entry is ignored and status
-    unchanged if message is not a valid string.
+    Logs a new entry. Overall log status is raised if new level is greater
+    (e.g. FATAL > ERROR). Candidate log entry is ignored and status remains
+    unchanged if the new level cannot be converted to an integer, or if not an
+    OSlg constant (once converted). Relies on OSlg method 'trim()': candidate
+    entry is ignored and status unchanged if message is not a valid string.
 
     Args:
         lvl:
             Selected log level (e.g. CN.DEBUG).
         message:
-            Selected log message (max. 60 chars).
+            Selected log message (max 60 chars).
 
     Returns:
         Current log status, potentially raised.
@@ -263,10 +262,11 @@ def log(lvl=CN.DEBUG, message="") -> int:
 
 def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
     """
-    Logs template 'invalid object' entry, based on arguments. Relies on module
-    method log(): check its own exit conditions and module-level side effects.
-    Argument 'ord' is ignored unless > 0. Candidate log entry is ignored and
-    status remains unchanged if 'ord' cannot be converted to an integer.
+    Logs template 'invalid object' entry, based on arguments. Relies on OSlg
+    method 'log()': first check out its own operation, exit conditions and
+    module side effects. Candidate log entry is ignored and status remains
+    unchanged if 'ord' cannot be converted to an integer. Argument 'ord' is
+    ignored unless > 0.
 
     Args:
         id:
@@ -278,7 +278,7 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
         lvl:
             Selected log level (e.g. CN.DEBUG).
         res:
-            Selected return object.
+            Selected return object (e.g. 'False', None).
 
     Returns:
         Selected return object ('res').
@@ -314,9 +314,9 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
 def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
     """
     Logs template 'instance/class mismatch' entry, based on arguments. Relies
-    on module method log(): check its own exit conditions and module-level
-    side effects. Candidate log entry is ignored and status remains unchanged
-    if 'obj' is an instance of 'cl'.
+    on OSlg method 'log()': first check out its own operation, exit conditions
+    and module side effects. Candidate log entry is ignored and status remains
+    unchanged if 'obj' is an instance of 'cl'.
 
     Args:
         id:
@@ -330,7 +330,7 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
         lvl:
             Selected log level (e.g. CN.DEBUG).
         res:
-            Selected return object.
+            Selected return object (e.g. 'False', None).
 
     Returns:
         Selected return object ('res').
@@ -344,10 +344,12 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not inspect.isclass(cl) or isinstance(obj, cl):
-        return res
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:                  return res
+    if not mth:                 return res
+    if lvl < CN.DEBUG:          return res
+    if lvl > CN.FATAL:          return res
+    if not inspect.isclass(cl): return res
+    if isinstance(obj, cl):     return res
 
     msg  = "'%s' %s? " % (id, type(obj).__name__)
     msg += "expecting %s (%s)" % (cl.__name__, mth)
@@ -358,10 +360,10 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
 
 def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
     """
-    Logs template 'missing hash key' entry, based on arguments. Relies
-    on module method log(): check its own exit conditions and module-level
-    side effects. Candidate log entry is ignored and status remains unchanged
-    if 'obj' is an instance of 'cl'.
+    Logs template 'missing hash key' entry, based on arguments. Relies on OSlg
+    method 'log()': first check out its own operation, exit conditions and
+    module side effects. Candidate log entry is ignored and status remains
+    unchanged if 'key' is found in 'dct'.
 
     Args:
         id:
@@ -375,7 +377,7 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
         lvl:
             Selected log level (e.g. CN.DEBUG).
         res:
-            Selected return object.
+            Selected return object (e.g. 'False', None).
 
     Returns:
         Selected return object ('res').
@@ -390,10 +392,12 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not isinstance(dct, dict) or key in dct:
-        return res
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:                    return res
+    if not mth:                   return res
+    if lvl < CN.DEBUG:            return res
+    if lvl > CN.FATAL:            return res
+    if not isinstance(dct, dict): return res
+    if key in dct:                return res
 
     log(lvl, "Missing '%s' key in %s (%s)" % (ky, id, mth))
 
@@ -402,8 +406,9 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
 
 def empty(id="", mth="", lvl=CN.DEBUG, res=None):
     """
-    Logs template 'empty' entry, based on arguments. Relies on module method
-    log(): check its own exit conditions and module-level side effects.
+    Logs template 'empty' entry, based on arguments. Relies on OSlg method
+    'log()': first check out its own operation, exit conditions and module side
+    effects.
 
     Args:
         id:
@@ -413,7 +418,7 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
         lvl:
             Selected log level (e.g. CN.DEBUG).
         res:
-            Selected return object.
+            Selected return object (e.g. 'False', None).
 
     Returns:
         Selected return object ('res').
@@ -427,8 +432,10 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:         return res
+    if not mth:        return res
+    if lvl < CN.DEBUG: return res
+    if lvl > CN.FATAL: return res
 
     log(lvl, "Empty '%s' (%s)" % (id, mth))
 
@@ -437,8 +444,9 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
 
 def zero(id="", mth="", lvl=CN.DEBUG, res=None):
     """
-    Logs template 'zero' entry, based on arguments. Relies on module method
-    log(): check its own exit conditions and module-level side effects.
+    Logs template 'zero' entry, based on arguments. Relies on OSlg method
+    'log()': first check out its own operation, exit conditions and module side
+    effects.
 
     Args:
         id:
@@ -448,7 +456,7 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
         lvl:
             Selected log level (e.g. CN.DEBUG).
         res:
-            Selected return object.
+            Selected return object (e.g. 'False', None).
 
     Returns:
         Selected return object ('res').
@@ -462,8 +470,10 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:         return res
+    if not mth:        return res
+    if lvl < CN.DEBUG: return res
+    if lvl > CN.FATAL: return res
 
     log(lvl, "Zero '%s' (%s)" % (id, mth))
 
@@ -472,8 +482,9 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
 
 def negative(id="", mth="", lvl=CN.DEBUG, res=None):
     """
-    Logs template 'negative' entry, based on arguments. Relies on module method
-    log(): check its own exit conditions and module-level side effects.
+    Logs template 'negative' entry, based on arguments. Relies on OSlg method
+    'log()': first check out its own operation, exit conditions and module side
+    effects.
 
     Args:
         id:
@@ -483,7 +494,7 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
         lvl:
             Selected log level (e.g. CN.DEBUG).
         res:
-            Selected return object.
+            Selected return object (e.g. 'False', None).
 
     Returns:
         Selected return object ('res').
@@ -497,8 +508,10 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:         return res
+    if not mth:        return res
+    if lvl < CN.DEBUG: return res
+    if lvl > CN.FATAL: return res
 
     log(lvl, "Negative '%s' (%s)" % (id, mth))
 
