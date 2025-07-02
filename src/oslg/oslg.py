@@ -27,12 +27,27 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""
+Python implementation of the OSlg logger, in support of the OpenStudio SDK.
+
+Original Ruby implementation/documentation: https://github.com/rd2/oslg
+"""
+
 import inspect
 
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class _CN:
+    """
+    OSlg constants (int): 'DEBUG', 'INFO', 'WARN', 'ERROR' & 'FATAL'.
+
+    Typical usage:
+
+        import oslg
+        print(oslg.CN.FATAL)
+            (-> 6)
+    """
     DEBUG = 1
     INFO  = 2
     WARN  = 3
@@ -59,78 +74,26 @@ _level  = CN.INFO
 _status = 0
 
 
-def logs():
-    """Returns the logs list."""
-    return _logs
+def trim(txt="", length=160) -> str:
+    """
+    Converts an object to a string. Strips if necessary.
 
+    Args:
+        txt (str):
+            An object.
+        length (int):
+            Desired maximum string length (max 160).
 
-def level():
-    """Returns current log level."""
-    return _level
+    Returns:
+        str: Stripped, trimmed string.
+        "": If 'length' cannot be converted to an integer.
+        "": If 'txt' cannot be converted to a valid string.
 
-
-def status():
-    """Returns current log status."""
-    return _status
-
-
-def is_debug():
-    """Returns whether current status is DEBUG."""
-    return bool(_status == CN.DEBUG)
-
-
-def is_info():
-    """Returns whether current status is INFO."""
-    return bool(_status == CN.INFO)
-
-
-def is_warn():
-    """Returns whether current status is WARNING."""
-    return bool(_status == CN.WARNING)
-
-
-def is_error():
-    """Returns whether current status is ERROR."""
-    return bool(_status == CN.ERROR)
-
-
-def is_fatal():
-    """Returns whether current status is FATAL."""
-    return bool(_status == CN.FATAL)
-
-
-def tag(lvl=_level):
-    """Returns preset OSlg string that matches log level."""
-    try:
-        lvl = int(lvl)
-    except ValueError as e:
-        return _tag[0]
-
-    if not 0 <= lvl < len(_tag):
-        return _tag[0]
-
-    return _tag[lvl]
-
-
-def msg(stat=_status):
-    """Returns preset OSlg message that matches log status."""
-    try:
-        stat = int(stat)
-    except ValueError as e:
-        return _msg[0]
-
-    if not 0 <= stat < len(_msg):
-        return _msg[0]
-
-    return _msg[stat]
-
-
-def trim(txt="", length=60):
-    """Converts object to String - trims if necessary."""
+    """
     try:
         length = int(length)
     except ValueError as e:
-        length = 60
+        length = 160
 
     try:
         txt = str(txt).strip()[:length]
@@ -142,8 +105,107 @@ def trim(txt="", length=60):
     return txt
 
 
-def reset(lvl=CN.DEBUG):
-    """Resets level, if lvl (input) is within accepted range."""
+def logs() -> list:
+    """Returns generated logs."""
+    return _logs
+
+
+def level() -> int:
+    """Returns current log level."""
+    return _level
+
+
+def status() -> int:
+    """Returns current log status."""
+    return _status
+
+
+def is_debug() -> bool:
+    """Returns whether current status is DEBUG."""
+    return bool(_status == CN.DEBUG)
+
+
+def is_info() -> bool:
+    """Returns whether current status is INFO."""
+    return bool(_status == CN.INFO)
+
+
+def is_warn() -> bool:
+    """Returns whether current status is WARNING."""
+    return bool(_status == CN.WARNING)
+
+
+def is_error() -> bool:
+    """Returns whether current status is ERROR."""
+    return bool(_status == CN.ERROR)
+
+
+def is_fatal() -> bool:
+    """Returns whether current status is FATAL."""
+    return bool(_status == CN.FATAL)
+
+
+def tag(lvl=_level) -> str:
+    """
+    Returns a preset string that matches a log level.
+
+    Args:
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+
+    Returns:
+        str: Matching 'tag' string (e.g. "DEBUG").
+        "": If 'lvl' not an OSlg constant.
+
+    """
+    try:
+        lvl = int(lvl)
+    except ValueError as e:
+        return _tag[0]
+
+    if not 0 <= lvl < len(_tag):
+        return _tag[0]
+
+    return _tag[lvl]
+
+
+def msg(stat=_status) -> str:
+    """
+    Returns a preset string that matches a log status.
+
+    Args:
+        stat (int):
+            Selected log status (e.g. CN.FATAL).
+
+    Returns:
+        str: Matching 'status' string (e.g. "Failure, triggered fatal errors").
+        "": If 'stat' not a valid OSlg constant.
+
+    """
+    try:
+        stat = int(stat)
+    except ValueError as e:
+        return _msg[0]
+
+    if not 0 <= stat < len(_msg):
+        return _msg[0]
+
+    return _msg[stat]
+
+
+def reset(lvl=CN.DEBUG) -> int:
+    """
+    Resets log level.
+
+    Args:
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+
+    Returns:
+        int: Newly reset log level. Remains unchanged if 'lvl' cannot be
+        converted to an integer, or if not an OSlg constant (once converted).
+
+    """
     global _level
 
     try:
@@ -157,8 +219,26 @@ def reset(lvl=CN.DEBUG):
     return _level
 
 
-def log(lvl=CN.DEBUG, message=""):
-    """Logs a new entry, if provided arguments are valid."""
+def log(lvl=CN.DEBUG, message="", length=160) -> int:
+    """
+    Logs a new entry. Overall log status is raised if new level is greater
+    (e.g. FATAL > ERROR). Candidate log entry is ignored and status remains
+    unchanged if the new level cannot be converted to an integer, or if not an
+    OSlg constant (once converted). Relies on OSlg method 'trim()': candidate
+    entry is ignored and status unchanged if message is not a valid string.
+
+    Args:
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        message (str):
+            Selected log message.
+        length (int):
+            Selected log message length (max 160 chars).
+
+    Returns:
+        Current log status, potentially raised.
+
+    """
     global _status
     global _logs
 
@@ -167,7 +247,14 @@ def log(lvl=CN.DEBUG, message=""):
     except ValueError as e:
         return _status
 
-    message = trim(message)
+    try:
+        length = int(length)
+    except ValueError as e:
+        return _status
+
+    if length > 160: length = 160
+
+    message = trim(message, length)
 
     if not message or lvl < CN.DEBUG or lvl > CN.FATAL or lvl < _level:
         return _status
@@ -181,7 +268,29 @@ def log(lvl=CN.DEBUG, message=""):
 
 
 def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
-    """Logs template 'invalid object' message (~60chars), if valid arguments."""
+    """
+    Logs template 'invalid object' entry, based on arguments. Relies on OSlg
+    method 'log()': first check out its own operation, exit conditions and
+    module side effects. Candidate log entry is ignored and status remains
+    unchanged if 'ord' cannot be converted to an integer. Argument 'ord' is
+    ignored unless > 0.
+
+    Args:
+        id (str):
+            Object identifier string (e.g. "circle radius").
+        mth (str):
+            Method identifier string (e.g. "circle area").
+        ord (int):
+            Method call parameter index (e.g. '1' if 2nd argument).
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        res:
+            Selected return object (e.g. 'False', None).
+
+    Returns:
+        Selected return object ('res').
+
+    """
     id  = trim(id)
     mth = trim(mth)
 
@@ -210,8 +319,30 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
 
 
 def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
-    """Logs template 'instance/class mismatch' message, if valid arguments."""
+    """
+    Logs template 'instance/class mismatch' entry, based on arguments. Relies
+    on OSlg method 'log()': first check out its own operation, exit conditions
+    and module side effects. Candidate log entry is ignored and status remains
+    unchanged if 'obj' is an instance of 'cl'.
 
+    Args:
+        id (str):
+            Object identifier string (e.g. "circle radius").
+        obj:
+            Mismatched object (e.g. boolean)
+        cl:
+            Desired target class (e.g. float)
+        mth (str):
+            Method identifier string (e.g. "circle area").
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        res:
+            Selected return object (e.g. 'False', None).
+
+    Returns:
+        Selected return object ('res').
+
+    """
     id  = trim(id)
     mth = trim(mth)
 
@@ -220,10 +351,12 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not inspect.isclass(cl) or isinstance(obj, cl):
-        return res
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:                  return res
+    if not mth:                 return res
+    if lvl < CN.DEBUG:          return res
+    if lvl > CN.FATAL:          return res
+    if not inspect.isclass(cl): return res
+    if isinstance(obj, cl):     return res
 
     msg  = "'%s' %s? " % (id, type(obj).__name__)
     msg += "expecting %s (%s)" % (cl.__name__, mth)
@@ -233,8 +366,30 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
 
 
 def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
-    """Logs template 'missing hash key' message, if valid arguments."""
+    """
+    Logs template 'missing hash key' entry, based on arguments. Relies on OSlg
+    method 'log()': first check out its own operation, exit conditions and
+    module side effects. Candidate log entry is ignored and status remains
+    unchanged if 'key' is found in 'dct'.
 
+    Args:
+        id (str):
+            Object identifier string (e.g. "circle radius").
+        dct (dict):
+            Dictionary (or Hash) to validate.
+        key:
+            Missing dictionary key.
+        mth (str):
+            Method identifier string.
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        res:
+            Selected return object (e.g. 'False', None).
+
+    Returns:
+        Selected return object ('res').
+
+    """
     id  = trim(id)
     mth = trim(mth)
     ky  = trim(key)
@@ -244,10 +399,12 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not isinstance(dct, dict) or key in dct:
-        return res
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:                    return res
+    if not mth:                   return res
+    if lvl < CN.DEBUG:            return res
+    if lvl > CN.FATAL:            return res
+    if not isinstance(dct, dict): return res
+    if key in dct:                return res
 
     log(lvl, "Missing '%s' key in %s (%s)" % (ky, id, mth))
 
@@ -255,8 +412,25 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
 
 
 def empty(id="", mth="", lvl=CN.DEBUG, res=None):
-    """Logs template 'empty' message, if provided arguments are valid."""
+    """
+    Logs template 'empty' entry, based on arguments. Relies on OSlg method
+    'log()': first check out its own operation, exit conditions and module side
+    effects.
 
+    Args:
+        id (str):
+            Object identifier string (e.g. "circle radius").
+        mth (str):
+            Method identifier string.
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        res:
+            Selected return object (e.g. 'False', None).
+
+    Returns:
+        Selected return object ('res').
+
+    """
     id  = trim(id)
     mth = trim(mth)
 
@@ -265,8 +439,10 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:         return res
+    if not mth:        return res
+    if lvl < CN.DEBUG: return res
+    if lvl > CN.FATAL: return res
 
     log(lvl, "Empty '%s' (%s)" % (id, mth))
 
@@ -274,8 +450,25 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
 
 
 def zero(id="", mth="", lvl=CN.DEBUG, res=None):
-    """Logs template 'zero' value message, if provided arguments are valid."""
+    """
+    Logs template 'zero' entry, based on arguments. Relies on OSlg method
+    'log()': first check out its own operation, exit conditions and module side
+    effects.
 
+    Args:
+        id (str):
+            Object identifier string (e.g. "circle radius").
+        mth (str):
+            Method identifier string.
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        res:
+            Selected return object (e.g. 'False', None).
+
+    Returns:
+        Selected return object ('res').
+
+    """
     id  = trim(id)
     mth = trim(mth)
 
@@ -284,8 +477,10 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:         return res
+    if not mth:        return res
+    if lvl < CN.DEBUG: return res
+    if lvl > CN.FATAL: return res
 
     log(lvl, "Zero '%s' (%s)" % (id, mth))
 
@@ -293,8 +488,25 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
 
 
 def negative(id="", mth="", lvl=CN.DEBUG, res=None):
-    """Logs template 'negative' message, if provided arguments are valid."""
+    """
+    Logs template 'negative' entry, based on arguments. Relies on OSlg method
+    'log()': first check out its own operation, exit conditions and module side
+    effects.
 
+    Args:
+        id (str):
+            Object identifier string (e.g. "circle radius").
+        mth (str):
+            Method identifier string.
+        lvl (int):
+            Selected log level (e.g. CN.DEBUG).
+        res:
+            Selected return object (e.g. 'False', None).
+
+    Returns:
+        Selected return object ('res').
+
+    """
     id  = trim(id)
     mth = trim(mth)
 
@@ -303,15 +515,17 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
     except ValueError as e:
         return res
 
-    if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
-        return res
+    if not id:         return res
+    if not mth:        return res
+    if lvl < CN.DEBUG: return res
+    if lvl > CN.FATAL: return res
 
     log(lvl, "Negative '%s' (%s)" % (id, mth))
 
     return res
 
 
-def clean():
+def clean() -> int:
     """Resets log status and entries."""
     global _status
     global _logs
