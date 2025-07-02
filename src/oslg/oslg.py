@@ -92,14 +92,12 @@ def trim(txt="", length=160) -> str:
     """
     try:
         length = int(length)
-    except ValueError as e:
+    except Exception:
         length = 160
 
     try:
         txt = str(txt).strip()[:length]
-    except UnicodeEncodeError:
-        txt = ""
-    except Exception as e:
+    except Exception:
         txt = ""
 
     return txt
@@ -160,7 +158,7 @@ def tag(lvl=_level) -> str:
     """
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return _tag[0]
 
     if not 0 <= lvl < len(_tag):
@@ -184,7 +182,7 @@ def msg(stat=_status) -> str:
     """
     try:
         stat = int(stat)
-    except ValueError as e:
+    except Exception:
         return _msg[0]
 
     if not 0 <= stat < len(_msg):
@@ -210,7 +208,7 @@ def reset(lvl=CN.DEBUG) -> int:
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return _level
 
     if CN.DEBUG <= lvl <= CN.FATAL:
@@ -244,12 +242,12 @@ def log(lvl=CN.DEBUG, message="", length=160) -> int:
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return _status
 
     try:
         length = int(length)
-    except ValueError as e:
+    except Exception:
         return _status
 
     if length > 160: length = 160
@@ -296,12 +294,12 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
 
     try:
         ord = int(ord)
-    except ValueError as e:
+    except Exception:
         return res
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return res
 
     if not id or not mth or lvl < CN.DEBUG or lvl > CN.FATAL:
@@ -348,7 +346,7 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return res
 
     if not id:                  return res
@@ -396,7 +394,7 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return res
 
     if not id:                    return res
@@ -436,7 +434,7 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return res
 
     if not id:         return res
@@ -474,7 +472,7 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return res
 
     if not id:         return res
@@ -512,7 +510,7 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
 
     try:
         lvl = int(lvl)
-    except ValueError as e:
+    except Exception:
         return res
 
     if not id:         return res
