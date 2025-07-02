@@ -132,7 +132,7 @@ def is_info() -> bool:
 
 def is_warn() -> bool:
     """Returns whether current status is WARNING."""
-    return bool(_status == CN.WARNING)
+    return bool(_status == CN.WARN)
 
 
 def is_error() -> bool:
