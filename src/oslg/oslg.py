@@ -79,15 +79,15 @@ def trim(txt="", length=160) -> str:
     Converts an object to a string. Strips if necessary.
 
     Args:
-        txt:
+        txt (str):
             An object.
-        length:
+        length (int):
             Desired maximum string length (max 160).
 
     Returns:
-        Stripped, trimmed string. Maximum string length is defaulted at 160
-        if 'length' cannot be converted to an integer. Returns an empty string
-        if 'txt' cannot be converted to a valid string.
+        str: Stripped, trimmed string.
+        "": If 'length' cannot be converted to an integer.
+        "": If 'txt' cannot be converted to a valid string.
 
     """
     try:
@@ -150,13 +150,12 @@ def tag(lvl=_level) -> str:
     Returns a preset string that matches a log level.
 
     Args:
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
 
     Returns:
-        Matching 'tag' string (e.g. "DEBUG"). Returns an empty string if
-        'lvl' cannot be converted to an integer, or if not an OSlg constant
-        (once converted).
+        str: Matching 'tag' string (e.g. "DEBUG").
+        "": If 'lvl' not an OSlg constant.
 
     """
     try:
@@ -175,13 +174,12 @@ def msg(stat=_status) -> str:
     Returns a preset string that matches a log status.
 
     Args:
-        stat:
+        stat (int):
             Selected log status (e.g. CN.FATAL).
 
     Returns:
-        Matching 'status' string (e.g. "Failure, triggered fatal errors").
-        Returns an empty string if 'stat' cannot be converted to an integer, or
-        if not an OSlg constant (once converted).
+        str: Matching 'status' string (e.g. "Failure, triggered fatal errors").
+        "": If 'stat' not a valid OSlg constant.
 
     """
     try:
@@ -200,12 +198,12 @@ def reset(lvl=CN.DEBUG) -> int:
     Resets log level.
 
     Args:
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
 
     Returns:
-        Newly reset log level. Remains unchanged if 'lvl' cannot be converted
-        to an integer, or if not an OSlg constant (once converted).
+        int: Newly reset log level. Remains unchanged if 'lvl' cannot be
+        converted to an integer, or if not an OSlg constant (once converted).
 
     """
     global _level
@@ -278,13 +276,13 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
     ignored unless > 0.
 
     Args:
-        id:
+        id (str):
             Object identifier string (e.g. "circle radius").
-        mth:
+        mth (str):
             Method identifier string (e.g. "circle area").
-        ord:
+        ord (int):
             Method call parameter index (e.g. '1' if 2nd argument).
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
@@ -328,15 +326,15 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
     unchanged if 'obj' is an instance of 'cl'.
 
     Args:
-        id:
+        id (str):
             Object identifier string (e.g. "circle radius").
         obj:
             Mismatched object (e.g. boolean)
         cl:
             Desired target class (e.g. float)
-        mth:
+        mth (str):
             Method identifier string (e.g. "circle area").
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
@@ -375,15 +373,15 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
     unchanged if 'key' is found in 'dct'.
 
     Args:
-        id:
+        id (str):
             Object identifier string (e.g. "circle radius").
-        dct:
+        dct (dict):
             Dictionary (or Hash) to validate.
         key:
             Missing dictionary key.
-        mth:
+        mth (str):
             Method identifier string.
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
@@ -420,11 +418,11 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
     effects.
 
     Args:
-        id:
+        id (str):
             Object identifier string (e.g. "circle radius").
-        mth:
+        mth (str):
             Method identifier string.
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
@@ -458,11 +456,11 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
     effects.
 
     Args:
-        id:
+        id (str):
             Object identifier string (e.g. "circle radius").
-        mth:
+        mth (str):
             Method identifier string.
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
@@ -496,11 +494,11 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
     effects.
 
     Args:
-        id:
+        id (str):
             Object identifier string (e.g. "circle radius").
-        mth:
+        mth (str):
             Method identifier string.
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
