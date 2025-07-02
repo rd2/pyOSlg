@@ -39,6 +39,10 @@ FTL = oslg.CN.FATAL
 class TestOSlgModuleMethods(unittest.TestCase):
     def test_oslg_constants(self):
         self.assertEqual(DBG, 1)
+        self.assertEqual(INF, 2)
+        self.assertEqual(WRN, 3)
+        self.assertEqual(ERR, 4)
+        self.assertEqual(FTL, 5)
 
     def test01_oslg_initialized(self):
         self.assertEqual(len(oslg.logs()), 0)
@@ -83,14 +87,14 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
-        self.assertEqual(oslg.invalid("radius", "area", 0, FTL), None)
-        self.assertFalse(oslg.is_info())
-        self.assertTrue(oslg.is_fatal())
-        self.assertEqual(oslg.status(), FTL)
+        self.assertEqual(oslg.invalid("radius", "area", 0, WRN), None)
+        self.assertFalse(oslg.is_fatal())
+        self.assertTrue(oslg.is_warn())
+        self.assertEqual(oslg.status(), WRN)
         self.assertEqual(oslg.level(), INF)
         self.assertEqual(len(oslg.logs()), 1)
         self.assertEqual(oslg.logs()[0]["message"], m2)
-        self.assertEqual(oslg.logs()[0]["level"], FTL)
+        self.assertEqual(oslg.logs()[0]["level"], WRN)
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
