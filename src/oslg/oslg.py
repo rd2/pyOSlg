@@ -221,7 +221,7 @@ def reset(lvl=CN.DEBUG) -> int:
     return _level
 
 
-def log(lvl=CN.DEBUG, message="") -> int:
+def log(lvl=CN.DEBUG, message="", length=160) -> int:
     """
     Logs a new entry. Overall log status is raised if new level is greater
     (e.g. FATAL > ERROR). Candidate log entry is ignored and status remains
@@ -230,10 +230,12 @@ def log(lvl=CN.DEBUG, message="") -> int:
     entry is ignored and status unchanged if message is not a valid string.
 
     Args:
-        lvl:
+        lvl (int):
             Selected log level (e.g. CN.DEBUG).
-        message:
-            Selected log message (max 60 chars).
+        message (str):
+            Selected log message.
+        length (int):
+            Selected log message length (60 to 160 chars).
 
     Returns:
         Current log status, potentially raised.
@@ -247,7 +249,14 @@ def log(lvl=CN.DEBUG, message="") -> int:
     except ValueError as e:
         return _status
 
-    message = trim(message)
+    try:
+        length = int(length)
+    except ValueError as e:
+        return _status
+
+    if length < 60 or length > 160: length = 160
+
+    message = trim(message, length)
 
     if not message or lvl < CN.DEBUG or lvl > CN.FATAL or lvl < _level:
         return _status
