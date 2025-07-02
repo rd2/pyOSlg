@@ -74,7 +74,7 @@ _level  = CN.INFO
 _status = 0
 
 
-def trim(txt="", length=60) -> str:
+def trim(txt="", length=160) -> str:
     """
     Converts an object to a string. Strips if necessary.
 
@@ -82,10 +82,10 @@ def trim(txt="", length=60) -> str:
         txt:
             An object.
         length:
-            Desired maximum string length.
+            Desired maximum string length (max 160).
 
     Returns:
-        Stripped, trimmed string. Maximum string length is defaulted at 60
+        Stripped, trimmed string. Maximum string length is defaulted at 160
         if 'length' cannot be converted to an integer. Returns an empty string
         if 'txt' cannot be converted to a valid string.
 
@@ -93,7 +93,7 @@ def trim(txt="", length=60) -> str:
     try:
         length = int(length)
     except ValueError as e:
-        length = 60
+        length = 160
 
     try:
         txt = str(txt).strip()[:length]
@@ -235,7 +235,7 @@ def log(lvl=CN.DEBUG, message="", length=160) -> int:
         message (str):
             Selected log message.
         length (int):
-            Selected log message length (60 to 160 chars).
+            Selected log message length (max 160 chars).
 
     Returns:
         Current log status, potentially raised.
@@ -254,7 +254,7 @@ def log(lvl=CN.DEBUG, message="", length=160) -> int:
     except ValueError as e:
         return _status
 
-    if length < 60 or length > 160: length = 160
+    if length > 160: length = 160
 
     message = trim(message, length)
 
