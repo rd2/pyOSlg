@@ -147,7 +147,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
         m1 = "Empty 'hash' (area)"
         self.assertEqual(oslg.level(), INF)
         self.assertFalse(oslg.logs())
-        self.assertEqual(oslg.empty("hash", "area", ERR), None)
+        self.assertEqual(oslg.empty("hash", "area", ERR, []), [])
         self.assertFalse(oslg.is_info())
         self.assertTrue(oslg.is_error())
         self.assertEqual(oslg.status(), ERR)
