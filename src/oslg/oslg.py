@@ -74,31 +74,31 @@ _level  = CN.INFO
 _status = 0
 
 
-def trim(txt="", length=160) -> str:
+def trim(txt="", sz=None) -> str:
     """
     Converts an object to a string. Strips if necessary.
 
     Args:
         txt (str):
             An object.
-        length (int):
-            Desired maximum string length (max 160).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         str: Stripped, trimmed string.
-        "": If 'length' cannot be converted to an integer.
         "": If 'txt' cannot be converted to a valid string.
 
     """
     try:
-        length = int(length)
-    except:
-        length = 160
-
-    try:
-        txt = str(txt).strip()[:length]
+        txt = str(txt).strip()
     except:
         txt = ""
+
+    try:
+        sz = int(sz)
+        if len(txt) > sz: txt = txt[:sz] + " ..."
+    except:
+        pass
 
     return txt
 
@@ -217,7 +217,7 @@ def reset(lvl=CN.DEBUG) -> int:
     return _level
 
 
-def log(lvl=CN.DEBUG, message="", length=160) -> int:
+def log(lvl=CN.DEBUG, message="", sz=None) -> int:
     """
     Logs a new entry. Overall log status is raised if new level is greater
     (e.g. FATAL > ERROR). Candidate log entry is ignored and status remains
@@ -230,8 +230,8 @@ def log(lvl=CN.DEBUG, message="", length=160) -> int:
             Selected log level (e.g. CN.DEBUG).
         message (str):
             Selected log message.
-        length (int):
-            Selected log message length (max 160 chars).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Current log status, potentially raised.
@@ -245,14 +245,7 @@ def log(lvl=CN.DEBUG, message="", length=160) -> int:
     except:
         return _status
 
-    try:
-        length = int(length)
-    except:
-        return _status
-
-    if length > 160: length = 160
-
-    message = trim(message, length)
+    message = trim(message, sz)
 
     if not message or lvl < CN.DEBUG or lvl > CN.FATAL or lvl < _level:
         return _status
@@ -265,7 +258,7 @@ def log(lvl=CN.DEBUG, message="", length=160) -> int:
     return _status
 
 
-def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
+def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None, sz=None):
     """
     Logs template 'invalid object' entry, based on arguments. Relies on OSlg
     method 'log()': first check out its own operation, exit conditions and
@@ -284,6 +277,8 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Selected return object ('res').
@@ -311,12 +306,12 @@ def invalid(id="", mth="", ord=0, lvl=CN.DEBUG, res=None):
         msg += "arg #%d "  % (ord)
 
     msg += "(%s)" % (mth)
-    log(lvl, msg)
+    log(lvl, msg, sz)
 
     return res
 
 
-def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
+def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None, sz=None):
     """
     Logs template 'instance/class mismatch' entry, based on arguments. Relies
     on OSlg method 'log()': first check out its own operation, exit conditions
@@ -336,6 +331,8 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Selected return object ('res').
@@ -358,12 +355,12 @@ def mismatch(id="", obj=None, cl=None, mth="", lvl=CN.DEBUG, res=None):
 
     msg  = "'%s' %s? " % (id, type(obj).__name__)
     msg += "expecting %s (%s)" % (cl.__name__, mth)
-    log(lvl, msg)
+    log(lvl, msg, sz)
 
     return res
 
 
-def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
+def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None, sz=None):
     """
     Logs template 'missing hash key' entry, based on arguments. Relies on OSlg
     method 'log()': first check out its own operation, exit conditions and
@@ -383,6 +380,8 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Selected return object ('res').
@@ -404,12 +403,12 @@ def hashkey(id="", dct={}, key="", mth="", lvl=CN.DEBUG, res=None):
     if not isinstance(dct, dict): return res
     if key in dct:                return res
 
-    log(lvl, "Missing '%s' key in %s (%s)" % (ky, id, mth))
+    log(lvl, "Missing '%s' key in %s (%s)" % (ky, id, mth), sz)
 
     return res
 
 
-def empty(id="", mth="", lvl=CN.DEBUG, res=None):
+def empty(id="", mth="", lvl=CN.DEBUG, res=None, sz=None):
     """
     Logs template 'empty' entry, based on arguments. Relies on OSlg method
     'log()': first check out its own operation, exit conditions and module side
@@ -424,6 +423,8 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Selected return object ('res').
@@ -442,12 +443,12 @@ def empty(id="", mth="", lvl=CN.DEBUG, res=None):
     if lvl < CN.DEBUG: return res
     if lvl > CN.FATAL: return res
 
-    log(lvl, "Empty '%s' (%s)" % (id, mth))
+    log(lvl, "Empty '%s' (%s)" % (id, mth), sz)
 
     return res
 
 
-def zero(id="", mth="", lvl=CN.DEBUG, res=None):
+def zero(id="", mth="", lvl=CN.DEBUG, res=None, sz=None):
     """
     Logs template 'zero' entry, based on arguments. Relies on OSlg method
     'log()': first check out its own operation, exit conditions and module side
@@ -462,6 +463,8 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Selected return object ('res').
@@ -480,12 +483,12 @@ def zero(id="", mth="", lvl=CN.DEBUG, res=None):
     if lvl < CN.DEBUG: return res
     if lvl > CN.FATAL: return res
 
-    log(lvl, "Zero '%s' (%s)" % (id, mth))
+    log(lvl, "Zero '%s' (%s)" % (id, mth), sz)
 
     return res
 
 
-def negative(id="", mth="", lvl=CN.DEBUG, res=None):
+def negative(id="", mth="", lvl=CN.DEBUG, res=None, sz=None):
     """
     Logs template 'negative' entry, based on arguments. Relies on OSlg method
     'log()': first check out its own operation, exit conditions and module side
@@ -500,6 +503,8 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
             Selected log level (e.g. CN.DEBUG).
         res:
             Selected return object (e.g. 'False', None).
+        sz (int):
+            Selected maximum string length, or 'size' (optional).
 
     Returns:
         Selected return object ('res').
@@ -518,7 +523,7 @@ def negative(id="", mth="", lvl=CN.DEBUG, res=None):
     if lvl < CN.DEBUG: return res
     if lvl > CN.FATAL: return res
 
-    log(lvl, "Negative '%s' (%s)" % (id, mth))
+    log(lvl, "Negative '%s' (%s)" % (id, mth), sz)
 
     return res
 
