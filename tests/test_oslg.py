@@ -56,7 +56,7 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(oslg.msg(FTL), "Failure, triggered fatal errors")
         self.assertNotEqual(oslg.msg(FTL), "Debugging ...")
         self.assertEqual(oslg.trim("   oslg  "), "oslg")
-        self.assertEqual(oslg.trim("   oslg  ", 3), "osl")
+        self.assertEqual(oslg.trim("   oslg  ", 3), "osl ...")
         self.assertEqual(oslg.trim("   oslg  ", 64), "oslg")
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
@@ -95,6 +95,30 @@ class TestOSlgModuleMethods(unittest.TestCase):
         self.assertEqual(len(oslg.logs()), 1)
         self.assertEqual(oslg.logs()[0]["message"], m2)
         self.assertEqual(oslg.logs()[0]["level"], WRN)
+        self.assertEqual(oslg.reset(INF), INF)
+        self.assertEqual(oslg.clean(), INF)
+        self.assertEqual(oslg.level(), INF)
+
+        # Longish error message, exceeding 160 chars.
+        a = str([i+1 for i in range(60)])
+        l1 = 3 * 9 # "1, " + "2, " + "3, " ...+ "9, "
+        l2 = 4 * (59 - 9) # "10, " + "11, " + 12, ...+ "59, "
+        l3 = 2 # "60"
+        l4 = 2 # "[]"
+        self.assertEqual(l1 + l2 + l3 + l4, 231)
+        self.assertEqual(len(a), l1 + l2 + l3 + l4)
+        self.assertEqual(oslg.mismatch("x", "String", list, a, FTL, None, 156), None)
+        self.assertEqual(oslg.status(), FTL)
+        str1 = "'x' str? expecting list "                        # 24 chars
+        str2 = "([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, "   # 45 chars
+        str3 = "14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, "    # 44 chars
+        str4 = "25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, ..." # 47 chars
+        str0 = str1 + str2 + str3 + str4
+        self.assertEqual(len(str0), 160) # 156 + " ..."
+        self.assertEqual(len(oslg.logs()[0]["message"]), len(str0))
+        self.assertEqual(oslg.logs()[0]["message"], str0)
+        self.assertEqual(oslg.level(), INF)
+        self.assertEqual(len(oslg.logs()), 1)
         self.assertEqual(oslg.reset(INF), INF)
         self.assertEqual(oslg.clean(), INF)
         self.assertEqual(oslg.level(), INF)
